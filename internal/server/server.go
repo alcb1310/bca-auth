@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -29,6 +30,14 @@ func NewServer() *Server {
 
 	s.Router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello World from server"))
+	})
+
+	s.Router.Route("/api/v1", func(r chi.Router) {
+		r.Use(middleware.AllowContentType("application/json"))
+
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		})
 	})
 
 	return s
