@@ -14,3 +14,15 @@ run:
 # Live Reload
 watch:
 	@air
+
+clean:
+	@echo "Cleaning..."
+	@go clean -testcache
+	@echo "Cache cleaned..."
+
+# Test the application
+unit-test: clean
+	@echo "Unit Tests..."
+	@go test `go list ./... | grep -v ./cmd/api | grep -v ./internal/database | grep -v ./mocks | grep -v ./tests | grep -v ./internal/views`
+
+test: unit-test
