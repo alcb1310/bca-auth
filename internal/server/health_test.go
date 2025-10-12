@@ -20,7 +20,7 @@ func TestCheckHealth(t *testing.T) {
 		{
 			name:   "check health",
 			status: http.StatusOK,
-			body:   "{\"status\":\"ok\"}\n",
+			body:   "{\"message\":\"It's healthy\"}\n",
 		},
 	}
 

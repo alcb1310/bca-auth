@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/alcb1310/bca-auth/internal/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -10,11 +11,13 @@ import (
 
 type Server struct {
 	Router *chi.Mux
+	DB     database.Service
 }
 
 func NewServer() *Server {
 	s := &Server{
 		Router: chi.NewRouter(),
+		DB:     database.NewService(),
 	}
 
 	s.Router.Use(middleware.Logger)
