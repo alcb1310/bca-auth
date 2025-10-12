@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/alcb1310/bca-auth/internal/server"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -14,12 +14,9 @@ var (
 )
 
 func main() {
-	r := chi.NewRouter()
+	server := server.NewServer()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World"))
-	})
-
-	fmt.Println("Listening on port " + port)
-	_ = http.ListenAndServe(":"+port, r)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
+		panic(err)
+	}
 }
