@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -24,11 +25,13 @@ func UserFromRequest(r *http.Request) (User, error) {
 	url := os.Getenv("AUTH_SERVER")
 	keyset, err := jwk.Fetch(r.Context(), fmt.Sprintf("%s/api/auth/jwks", url))
 	if err != nil {
+		slog.Error("fetch jwk", "error", err)
 		return User{}, fmt.Errorf("fetch jwk: %w", err)
 	}
 
 	token, err := jwt.ParseRequest(r, jwt.WithKeySet(keyset))
 	if err != nil {
+		slog.Error("parse request", "error", err)
 		return User{}, fmt.Errorf("parse request: %w", err)
 	}
 
