@@ -13,7 +13,16 @@ Backend for the Budget Control Application written in Go
 Add the following to your `.env` file:
 
 ```env
+PORT=${SERVER_PORT}
 DATABASE_URL=postgresql://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}?schema=public
+AUTH_SERVER=${BETTER_AUTH_SERVER}
+```
+
+## Installation
+
+```bash
+go mod tidy
+make run
 ```
 
 
