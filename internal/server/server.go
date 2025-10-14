@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/alcb1310/bca-auth/internal/auth"
 	"github.com/alcb1310/bca-auth/internal/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -36,6 +37,7 @@ func NewServer() *Server {
 
 	s.Router.Route("/api/v1", func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
+		r.Use(auth.IsAuthenticated())
 
 		r.Get("/health", s.CheckHealth)
 	})

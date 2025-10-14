@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -51,4 +53,21 @@ func UserFromRequest(r *http.Request) (User, error) {
 		Email: email,
 		Name:  name,
 	}, nil
+}
+
+func IsAuthenticated() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user, err := UserFromRequest(r)
+			if err != nil {
+				slog.Error("error getting user from request", "error", err)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+				_ = json.NewEncoder(w).Encode(map[string]string{"message": "unauthorized", "error": err.Error()})
+				return
+			}
+			ctx := r.Context()
+			ctx = context.WithValue(ctx, "user", user)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
 }
