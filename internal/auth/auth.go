@@ -21,7 +21,8 @@ var (
 )
 
 func UserFromRequest(r *http.Request) (User, error) {
-	keyset, err := jwk.Fetch(r.Context(), os.Getenv("AUTH_SERVER"))
+	url := os.Getenv("AUTH_SERVER")
+	keyset, err := jwk.Fetch(r.Context(), fmt.Sprintf("%s/api/auth/jwks", url))
 	if err != nil {
 		return User{}, fmt.Errorf("fetch jwk: %w", err)
 	}

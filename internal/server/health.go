@@ -13,6 +13,7 @@ func (s *Server) CheckHealth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("error getting user from request", "error", err)
 		w.WriteHeader(http.StatusUnauthorized)
+		_ = json.NewEncoder(w).Encode(map[string]string{"message": "unauthorized", "error": err.Error()})
 		return
 	}
 	m := s.DB.Health()
