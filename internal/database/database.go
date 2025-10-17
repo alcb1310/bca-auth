@@ -16,13 +16,14 @@ type service struct {
 }
 
 type Service interface {
-	Health() map[string]string
+	Health() (map[string]string, error)
 }
 
 func NewService() Service {
 	connStr := os.Getenv("DATABASE_URL")
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
+		slog.Error("connecting to db", "err", err)
 		panic(err)
 	}
 
@@ -34,17 +35,17 @@ func NewService() Service {
 	return s
 }
 
-func (s *service) Health() map[string]string {
+func (s *service) Health() (map[string]string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	err := s.db.PingContext(ctx)
 	if err != nil {
 		slog.Error("db down", "err", err)
-		os.Exit(1)
+		return nil, err
 	}
 
 	return map[string]string{
 		"message": "It's healthy",
-	}
+	}, nil
 }
