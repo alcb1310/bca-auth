@@ -40,6 +40,36 @@ func NewServer() *Server {
 		r.Use(auth.IsAuthenticated())
 
 		r.Get("/health", s.CheckHealth)
+
+		r.Route("/parametros", func(r chi.Router) {
+			r.Route("/partidas", func(r chi.Router) {})
+			r.Route("/categorias", func(r chi.Router) {})
+			r.Route("/materiales", func(r chi.Router) {})
+
+			r.Route("/proyectos", func(r chi.Router) {
+			})
+
+			r.Route("/proveeodres", func(r chi.Router) {})
+			r.Route("/rubros", func(r chi.Router) {})
+		})
+
+		r.Route("/transacciones", func(r chi.Router) {
+			r.Route("/presupuestos", func(r chi.Router) {})
+			r.Route("/facturas", func(r chi.Router) {})
+			r.Route("/cierre", func(r chi.Router) {})
+		})
+
+		r.Route("/reportes", func(r chi.Router) {
+			r.Route("/actual", func(r chi.Router) {})
+			r.Route("/cuadre", func(r chi.Router) {})
+			r.Route("/gastado", func(r chi.Router) {})
+			r.Route("/historico", func(r chi.Router) {})
+		})
+
+		r.Route("/analisis", func(r chi.Router) {
+			r.Route("/cantidades", func(r chi.Router) {})
+			r.Route("/analisis", func(r chi.Router) {})
+		})
 	})
 
 	return s
