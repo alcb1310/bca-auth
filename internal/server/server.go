@@ -47,6 +47,7 @@ func NewServer() *Server {
 			r.Route("/materiales", func(r chi.Router) {})
 
 			r.Route("/proyectos", func(r chi.Router) {
+				r.Get("/", s.getAllProjects)
 			})
 
 			r.Route("/proveeodres", func(r chi.Router) {})
