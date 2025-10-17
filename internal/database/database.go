@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alcb1310/bca-auth/internal/types"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -17,6 +18,8 @@ type service struct {
 
 type Service interface {
 	Health() (map[string]string, error)
+
+	GetAllProjects() ([]types.Project, error)
 }
 
 func NewService() Service {
