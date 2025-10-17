@@ -27,6 +27,12 @@ func NewService() Service {
 		panic(err)
 	}
 
+	err = createTables(db)
+	if err != nil {
+		slog.Error("creating tables", "err", err)
+		panic(err)
+	}
+
 	slog.Info("db up")
 
 	s := &service{
