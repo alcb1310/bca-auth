@@ -13,12 +13,14 @@ import (
 type Server struct {
 	Router *chi.Mux
 	DB     database.Service
+	User   auth.User
 }
 
 func NewServer() *Server {
 	s := &Server{
 		Router: chi.NewRouter(),
 		DB:     database.NewService(),
+		User:   auth.NewUser(),
 	}
 
 	s.Router.Use(middleware.Logger)
@@ -37,7 +39,7 @@ func NewServer() *Server {
 
 	s.Router.Route("/api/v1", func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
-		r.Use(auth.IsAuthenticated())
+		r.Use(s.User.IsAuthenticated())
 
 		r.Get("/health", s.CheckHealth)
 
