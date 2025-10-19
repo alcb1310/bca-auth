@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/alcb1310/bca-auth/internal/types"
+	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -20,6 +21,7 @@ type Service interface {
 	Health() (map[string]string, error)
 
 	GetAllProjects() ([]types.Project, error)
+	GetProject(id uuid.UUID) (types.Project, error)
 }
 
 func NewService() Service {

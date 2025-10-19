@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/alcb1310/bca-auth/internal/types"
+	"github.com/google/uuid"
 )
 
 func (s *service) GetAllProjects() ([]types.Project, error) {
@@ -27,4 +28,11 @@ func (s *service) GetAllProjects() ([]types.Project, error) {
 	}
 
 	return projects, nil
+}
+
+func (s *service) GetProject(id uuid.UUID) (types.Project, error) {
+	var p types.Project
+	sql := "SELECT id, name, is_active, gross_area, net_area FROM project WHERE id = $1"
+	err := s.db.QueryRow(sql, id).Scan(&p.ID, &p.Name, &p.IsActive, &p.GrossArea, &p.NetArea)
+	return p, err
 }

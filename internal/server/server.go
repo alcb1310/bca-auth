@@ -50,6 +50,7 @@ func NewServer() *Server {
 
 			r.Route("/proyectos", func(r chi.Router) {
 				r.Get("/", s.getAllProjects)
+				r.Get("/{id}", s.getProject)
 			})
 
 			r.Route("/proveeodres", func(r chi.Router) {})
