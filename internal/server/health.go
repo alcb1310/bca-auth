@@ -7,6 +7,7 @@ import (
 )
 
 func (s *Server) CheckHealth(w http.ResponseWriter, r *http.Request) {
+	slog.Info("health")
 	m, err := s.DB.Health()
 	if err != nil {
 		slog.Error("health", "err", err)
