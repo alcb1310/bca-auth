@@ -53,6 +53,7 @@ func NewServer() *Server {
 				r.Post("/", s.createProject)
 
 				r.Get("/{id}", s.getProject)
+				r.Put("/{id}", s.updateProject)
 			})
 
 			r.Route("/proveeodres", func(r chi.Router) {})

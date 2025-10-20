@@ -23,6 +23,7 @@ type Service interface {
 	GetAllProjects() ([]types.Project, error)
 	GetProject(id uuid.UUID) (types.Project, error)
 	CreateProject(p types.Project) error
+	UpdateProject(p types.Project) error
 }
 
 func NewService() Service {

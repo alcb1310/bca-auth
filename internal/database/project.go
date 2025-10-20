@@ -60,3 +60,23 @@ func (s *service) CreateProject(p types.Project) error {
 
 	return err
 }
+
+func (s *service) UpdateProject(p types.Project) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		slog.Error("Error creating transaction", "err", err)
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+
+	sql := "UPDATE project SET name = $1, is_active = $2, gross_area = $3, net_area = $4 WHERE id = $5"
+	_, err = tx.Exec(sql, p.Name, p.IsActive, p.GrossArea, p.NetArea, p.ID)
+
+	return err
+}
