@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/alcb1310/bca-auth/internal/types"
 	"github.com/go-chi/chi/v5"
@@ -112,9 +113,22 @@ func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := s.DB.CreateProject(project); err != nil {
-		slog.Error("createProject", "err", err)
+		if strings.Contains(err.Error(), "23505") {
+			slog.Error("createProject ya existe", "err", err)
+			errResponse := map[string]string{
+				"error": "El proyecto ya existe",
+			}
+			w.WriteHeader(http.StatusConflict)
+			_ = json.NewEncoder(w).Encode(errResponse)
+			return
+		}
+
+		slog.Error("createProject otro error", "err", err)
+		errResponse := map[string]string{
+			"error": err.Error(),
+		}
 		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(err)
+		_ = json.NewEncoder(w).Encode(errResponse)
 		return
 	}
 

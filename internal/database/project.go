@@ -51,8 +51,8 @@ func (s *service) CreateProject(p types.Project) error {
 		}
 	}()
 
-	sql := "INSERT INTO project (id, name, is_active, gross_area, net_area) VALUES ($1, $2, $3, $4, $5)"
-	_, err = tx.Exec(sql, p.ID, p.Name, p.IsActive, p.GrossArea, p.NetArea)
+	sql := "INSERT INTO project (name, is_active, gross_area, net_area) VALUES ($1, $2, $3, $4)"
+	_, err = tx.Exec(sql, p.Name, p.IsActive, p.GrossArea, p.NetArea)
 
 	if err != nil {
 		slog.Error("Error executing query", "err", err)
