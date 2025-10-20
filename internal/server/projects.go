@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/alcb1310/bca-auth/internal/types"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -13,8 +14,6 @@ import (
 
 func (s *Server) getAllProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := s.DB.GetAllProjects()
-	slog.Info("getAllProjects", "user from context", r.Context().Value("user"))
-	slog.Info("getAllProjects", "user from Server", s.User)
 	if err != nil {
 		slog.Error("getAllProjects", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,4 +55,69 @@ func (s *Server) getProject(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(project)
 
+}
+
+func (s *Server) createProject(w http.ResponseWriter, r *http.Request) {
+	p := map[string]any{}
+	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+		slog.Error("createProject decode body", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	project := types.Project{}
+	var ok bool
+	if project.Name, ok = p["name"].(string); !ok {
+		errResponse := map[string]string{
+			"error": "Ingrese un nombre",
+		}
+		slog.Error("createProject", "err", errResponse)
+
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errResponse)
+		return
+	}
+
+	if project.GrossArea, ok = p["gross_area"].(float64); !ok {
+		errResponse := map[string]string{
+			"error": "El area bruta debe ser un numero",
+		}
+		slog.Error("createProject", "err", errResponse)
+
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errResponse)
+		return
+	}
+
+	if project.NetArea, ok = p["net_area"].(float64); !ok {
+		errResponse := map[string]string{
+			"error": "El area neto debe ser un numero",
+		}
+		slog.Error("createProject", "err", errResponse)
+
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errResponse)
+		return
+	}
+
+	if project.IsActive, ok = p["is_active"].(bool); !ok {
+		errResponse := map[string]string{
+			"error": "is_active debe ser un booleano",
+		}
+		slog.Error("createProject", "err", errResponse)
+
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errResponse)
+		return
+	}
+	if err := s.DB.CreateProject(project); err != nil {
+		slog.Error("createProject", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNoContent)
 }

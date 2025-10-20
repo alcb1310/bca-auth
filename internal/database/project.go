@@ -36,3 +36,27 @@ func (s *service) GetProject(id uuid.UUID) (types.Project, error) {
 	err := s.db.QueryRow(sql, id).Scan(&p.ID, &p.Name, &p.IsActive, &p.GrossArea, &p.NetArea)
 	return p, err
 }
+
+func (s *service) CreateProject(p types.Project) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		slog.Error("Error creating transaction", "err", err)
+		return err
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+
+	sql := "INSERT INTO project (id, name, is_active, gross_area, net_area) VALUES ($1, $2, $3, $4, $5)"
+	_, err = tx.Exec(sql, p.ID, p.Name, p.IsActive, p.GrossArea, p.NetArea)
+
+	if err != nil {
+		slog.Error("Error executing query", "err", err)
+	}
+
+	return err
+}
