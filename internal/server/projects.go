@@ -2,11 +2,13 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 func (s *Server) getAllProjects(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +40,12 @@ func (s *Server) getProject(w http.ResponseWriter, r *http.Request) {
 
 	project, err := s.DB.GetProject(projectID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
+			_ = json.NewEncoder(w).Encode(err)
+			return
+		}
+
 		slog.Error("getProject", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(err)
