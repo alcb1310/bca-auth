@@ -10,3 +10,18 @@ create table if not exists project (
 
     unique (name)
 );
+
+create table if not exists supplier (
+    id uuid primary key default gen_random_uuid(),
+    supplier_id text not null,
+    name text not null,
+
+    contact_name text,
+    contact_email text,
+    contact_phone text,
+
+    created_at timestamp with time zone default now(),
+
+    unique (supplier_id),
+    unique (name)
+);
