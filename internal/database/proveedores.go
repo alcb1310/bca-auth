@@ -19,7 +19,7 @@ func (s *service) GetAllProveedores() ([]types.Proveedor, error) {
 
 	for rows.Next() {
 		var p types.Proveedor
-		if err = rows.Scan(&p.ID, &p.SuypplierID, &p.Name, &p.ContactName, &p.ContactEmail, &p.ContactPhone); err != nil {
+		if err = rows.Scan(&p.ID, &p.SupplierID, &p.Name, &p.ContactName, &p.ContactEmail, &p.ContactPhone); err != nil {
 			slog.Error("Error scanning row", "err", err)
 			return nil, err
 		}

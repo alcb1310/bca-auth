@@ -47,7 +47,9 @@ func NewServer() *Server {
 				r.Put("/{id}", s.updateProject)
 			})
 
-			r.Route("/proveeodres", func(r chi.Router) {})
+			r.Route("/proveedores", func(r chi.Router) {
+				r.Get("/", s.getAllProveedores)
+			})
 			r.Route("/rubros", func(r chi.Router) {})
 		})
 
