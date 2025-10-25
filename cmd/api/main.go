@@ -16,7 +16,7 @@ var (
 func main() {
 	server := server.NewServer()
 
-	fmt.Println(fmt.Sprintf("Listening on port %s", port))
+	fmt.Printf("Listening on port %s\n", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
 		panic(err)
 	}
