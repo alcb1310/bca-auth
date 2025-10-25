@@ -26,6 +26,7 @@ type Service interface {
 	UpdateProject(p types.Project) error
 
 	GetAllProveedores() ([]types.Proveedor, error)
+	CreateProveedor(p types.Proveedor) (err error)
 }
 
 func NewService() Service {
