@@ -42,16 +42,18 @@ func proveedoresValidate(p map[string]any) (types.Proveedor, error) {
 		proveedor.ContactName = &val
 	}
 
-	if val, ok = p["contact_email"].(string); !ok || val == "" {
+	var val2 string
+	if val2, ok = p["contact_email"].(string); !ok || val2 == "" {
 		proveedor.ContactEmail = nil
 	} else {
-		proveedor.ContactEmail = &val
+		proveedor.ContactEmail = &val2
 	}
 
-	if val, ok = p["contact_phone"].(string); !ok || val == "" {
+	var val3 string
+	if val3, ok = p["contact_phone"].(string); !ok || val3 == "" {
 		proveedor.ContactPhone = nil
 	} else {
-		proveedor.ContactPhone = &val
+		proveedor.ContactPhone = &val3
 	}
 
 	return proveedor, nil
