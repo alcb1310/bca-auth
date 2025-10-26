@@ -47,3 +47,23 @@ func (s *service) CreateProveedor(p types.Proveedor) (err error) {
 
 	return
 }
+
+func (s *service) UpdateProveedor(p types.Proveedor) (err error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		slog.Error("Error creating transaction", "err", err)
+		return
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		} else {
+			_ = tx.Commit()
+		}
+	}()
+
+	sql := "UPDATE supplier SET supplier_id = $1, name = $2, contact_name = $3, contact_email = $4, contact_phone = $5 WHERE id = $6"
+	_, err = tx.Exec(sql, p.SupplierID, p.Name, p.ContactName, p.ContactEmail, p.ContactPhone, p.ID)
+
+	return
+}
