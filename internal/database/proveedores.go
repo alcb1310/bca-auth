@@ -6,14 +6,13 @@ import (
 	"github.com/alcb1310/bca-auth/internal/types"
 )
 
-func (s *service) GetAllProveedores() ([]types.Proveedor, error) {
-	var proveedores = []types.Proveedor{}
+func (s *service) GetAllProveedores() (proveedores []types.Proveedor, err error) {
 	sql := "SELECT id,  supplier_id, name, contact_name, contact_email, contact_phone FROM supplier order by name"
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		slog.Error("Error executing query", "err", err)
-		return nil, err
+		return
 	}
 	defer func() { _ = rows.Close() }()
 
@@ -21,12 +20,12 @@ func (s *service) GetAllProveedores() ([]types.Proveedor, error) {
 		var p types.Proveedor
 		if err = rows.Scan(&p.ID, &p.SupplierID, &p.Name, &p.ContactName, &p.ContactEmail, &p.ContactPhone); err != nil {
 			slog.Error("Error scanning row", "err", err)
-			return nil, err
+			return
 		}
 		proveedores = append(proveedores, p)
 	}
 
-	return proveedores, nil
+	return
 }
 
 func (s *service) CreateProveedor(p types.Proveedor) (err error) {

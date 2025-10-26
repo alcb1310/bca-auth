@@ -20,12 +20,12 @@ type service struct {
 type Service interface {
 	Health() (map[string]string, error)
 
-	GetAllProjects() ([]types.Project, error)
-	GetProject(id uuid.UUID) (types.Project, error)
-	CreateProject(p types.Project) error
-	UpdateProject(p types.Project) error
+	GetAllProjects() (projects []types.Project, err error)
+	GetProject(id uuid.UUID) (project types.Project, err error)
+	CreateProject(p types.Project) (err error)
+	UpdateProject(p types.Project) (err error)
 
-	GetAllProveedores() ([]types.Proveedor, error)
+	GetAllProveedores() (proveedores []types.Proveedor, err error)
 	CreateProveedor(p types.Proveedor) (err error)
 }
 

@@ -7,14 +7,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *service) GetAllProjects() ([]types.Project, error) {
-	var projects = []types.Project{}
+func (s *service) GetAllProjects() (projects []types.Project, err error) {
 	sql := "SELECT id, name, is_active, gross_area, net_area FROM project order by name"
 
 	rows, err := s.db.Query(sql)
 	if err != nil {
 		slog.Error("Error executing query", "err", err)
-		return nil, err
+		return
 	}
 	defer func() { _ = rows.Close() }()
 
@@ -22,26 +21,25 @@ func (s *service) GetAllProjects() ([]types.Project, error) {
 		var p types.Project
 		if err = rows.Scan(&p.ID, &p.Name, &p.IsActive, &p.GrossArea, &p.NetArea); err != nil {
 			slog.Error("Error scanning row", "err", err)
-			return nil, err
+			return
 		}
 		projects = append(projects, p)
 	}
 
-	return projects, nil
+	return
 }
 
-func (s *service) GetProject(id uuid.UUID) (types.Project, error) {
-	var p types.Project
+func (s *service) GetProject(id uuid.UUID) (project types.Project, err error) {
 	sql := "SELECT id, name, is_active, gross_area, net_area FROM project WHERE id = $1"
-	err := s.db.QueryRow(sql, id).Scan(&p.ID, &p.Name, &p.IsActive, &p.GrossArea, &p.NetArea)
-	return p, err
+	err = s.db.QueryRow(sql, id).Scan(&project.ID, &project.Name, &project.IsActive, &project.GrossArea, &project.NetArea)
+	return
 }
 
-func (s *service) CreateProject(p types.Project) error {
+func (s *service) CreateProject(p types.Project) (err error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		slog.Error("Error creating transaction", "err", err)
-		return err
+		return
 	}
 	defer func() {
 		if err != nil {
@@ -58,14 +56,14 @@ func (s *service) CreateProject(p types.Project) error {
 		slog.Error("Error executing query", "err", err)
 	}
 
-	return err
+	return
 }
 
-func (s *service) UpdateProject(p types.Project) error {
+func (s *service) UpdateProject(p types.Project) (err error) {
 	tx, err := s.db.Begin()
 	if err != nil {
 		slog.Error("Error creating transaction", "err", err)
-		return err
+		return
 	}
 	defer func() {
 		if err != nil {
@@ -78,5 +76,5 @@ func (s *service) UpdateProject(p types.Project) error {
 	sql := "UPDATE project SET name = $1, is_active = $2, gross_area = $3, net_area = $4 WHERE id = $5"
 	_, err = tx.Exec(sql, p.Name, p.IsActive, p.GrossArea, p.NetArea, p.ID)
 
-	return err
+	return
 }
