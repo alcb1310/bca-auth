@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/alcb1310/bca-auth/internal/types"
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 )
 
 func (s *Server) getAllProveedores(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +93,47 @@ func (s *Server) createProveedores(w http.ResponseWriter, r *http.Request) {
 		}
 
 		slog.Error("createProveedores", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) updateProveedores(w http.ResponseWriter, r *http.Request) {
+	pid := chi.URLParam(r, "id")
+
+	proveedorID, err := uuid.Parse(pid)
+	if err != nil {
+		slog.Error("updateProveedores parse uuid", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	p := map[string]any{}
+	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+		slog.Error("updateProveedores decode body", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	proveedor, err := proveedoresValidate(p)
+	if err != nil {
+		slog.Error("updateProveedores validate", "err", err)
+		errResponse := map[string]string{
+			"error": err.Error(),
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(errResponse)
+		return
+	}
+	proveedor.ID = proveedorID
+
+	if err := s.DB.UpdateProveedor(proveedor); err != nil {
+		slog.Error("updateProveedores", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(err)
 		return

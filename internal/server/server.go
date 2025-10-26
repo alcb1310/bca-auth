@@ -50,6 +50,8 @@ func NewServer() *Server {
 			r.Route("/proveedores", func(r chi.Router) {
 				r.Get("/", s.getAllProveedores)
 				r.Post("/", s.createProveedores)
+
+				r.Put("/{id}", s.updateProveedores)
 			})
 			r.Route("/rubros", func(r chi.Router) {})
 		})
