@@ -27,30 +27,31 @@ func proveedoresValidate(p map[string]any) (types.Proveedor, error) {
 	var proveedor types.Proveedor
 	var ok bool
 
-	if proveedor.Name, ok = p["name"].(string); !ok {
-		return proveedor, errors.New("Ingrese un nombre")
-	}
-	if proveedor.Name == "" {
+	if proveedor.Name, ok = p["name"].(string); !ok || proveedor.Name == "" {
 		return proveedor, errors.New("Ingrese un nombre")
 	}
 
-	if proveedor.SupplierID, ok = p["supplier_id"].(string); !ok {
-		return proveedor, errors.New("Ingrese un RUC")
-	}
-	if proveedor.SupplierID == "" {
+	if proveedor.SupplierID, ok = p["supplier_id"].(string); !ok || proveedor.SupplierID == "" {
 		return proveedor, errors.New("Ingrese un RUC")
 	}
 
-	if proveedor.ContactName, ok = p["contact_name"].(*string); !ok {
+	var val string
+	if val, ok = p["contact_name"].(string); !ok || val == "" {
 		proveedor.ContactName = nil
+	} else {
+		proveedor.ContactName = &val
 	}
 
-	if proveedor.ContactEmail, ok = p["email"].(*string); !ok {
+	if val, ok = p["contact_email"].(string); !ok || val == "" {
 		proveedor.ContactEmail = nil
+	} else {
+		proveedor.ContactEmail = &val
 	}
 
-	if proveedor.ContactPhone, ok = p["contact_phone"].(*string); !ok {
+	if val, ok = p["contact_phone"].(string); !ok || val == "" {
 		proveedor.ContactPhone = nil
+	} else {
+		proveedor.ContactPhone = &val
 	}
 
 	return proveedor, nil
